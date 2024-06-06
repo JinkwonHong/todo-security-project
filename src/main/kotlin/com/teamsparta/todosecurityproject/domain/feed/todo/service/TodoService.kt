@@ -7,6 +7,7 @@ import com.teamsparta.todosecurityproject.domain.feed.todo.repository.TodoReposi
 import com.teamsparta.todosecurityproject.exception.ModelNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TodoService(
@@ -25,6 +26,7 @@ class TodoService(
         return todoCard.toResponseWithComments(comments)
     }
 
+    @Transactional
     fun createTodoCard(request: CreateTodoCardRequest): TodoCardResponse {
         val todoCard = TodoCard(
             title = request.title,
