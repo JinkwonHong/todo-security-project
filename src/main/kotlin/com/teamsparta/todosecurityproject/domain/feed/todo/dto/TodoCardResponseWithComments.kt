@@ -5,21 +5,23 @@ import com.teamsparta.todosecurityproject.domain.feed.todo.model.TodoCard
 import com.teamsparta.todosecurityproject.domain.user.model.User
 import java.time.LocalDateTime
 
-data class TodoCardResponse(
+data class TodoCardResponseWithComments(
 
     val title: String,
     val description: String,
     val user: User,
     val createdAt: LocalDateTime?,
     val updatedAt: LocalDateTime?,
+    val comments: List<Comment>
 )
 
-fun TodoCard.toResponse(): TodoCardResponse {
-    return TodoCardResponse(
+fun TodoCard.toResponseWithComments(comments: List<Comment>): TodoCardResponseWithComments {
+    return TodoCardResponseWithComments(
         title = title,
         description = description,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        user = user
+        user = user,
+        comments = comments
     )
 }
