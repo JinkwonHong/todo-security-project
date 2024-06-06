@@ -14,6 +14,10 @@ class TodoService(
     private val commentRepository: CommentRepository,
 
     ) {
+    fun getAllTodoCards() : List<TodoCardResponse> {
+        return todoRepository.findAllByOrderByCreatedAtDesc().map { it.toResponse() }
+    }
+
     fun getTodoCardById(todoCardId: Long): TodoCardResponseWithComments {
         val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
         val comments = commentRepository.findAllByTodoCardIdOrderByCreatedAt(todoCardId)

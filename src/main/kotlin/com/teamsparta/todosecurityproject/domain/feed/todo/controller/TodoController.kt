@@ -14,6 +14,14 @@ import org.springframework.web.bind.annotation.*
 class TodoController(
     private val todoService: TodoService
 ) {
+    @GetMapping
+    fun getAllTodoCards(
+    ): ResponseEntity<List<TodoCardResponse>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(todoService.getAllTodoCards())
+    }
+
     @GetMapping("/{todoCardId}")
     fun getTodoCardById(
         @PathVariable todoCardId: Long,
