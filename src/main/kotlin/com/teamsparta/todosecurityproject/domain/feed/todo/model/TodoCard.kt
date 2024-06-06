@@ -1,6 +1,7 @@
 package com.teamsparta.todosecurityproject.domain.feed.todo.model
 
 import com.teamsparta.todosecurityproject.domain.feed.basetime.model.BaseTime
+import com.teamsparta.todosecurityproject.domain.feed.todo.dto.UpdateTodoCardRequest
 import com.teamsparta.todosecurityproject.domain.user.model.User
 import jakarta.persistence.*
 
@@ -19,4 +20,9 @@ class TodoCard(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    fun updateTodoCardField(updateTodoCardRequest: UpdateTodoCardRequest) {
+        title = updateTodoCardRequest.title
+        description = updateTodoCardRequest.description
+    }
 }
