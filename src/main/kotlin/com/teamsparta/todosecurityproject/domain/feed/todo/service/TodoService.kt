@@ -4,6 +4,7 @@ import com.teamsparta.todosecurityproject.domain.feed.comment.repository.Comment
 import com.teamsparta.todosecurityproject.domain.feed.todo.dto.*
 import com.teamsparta.todosecurityproject.domain.feed.todo.model.TodoCard
 import com.teamsparta.todosecurityproject.domain.feed.todo.repository.TodoRepository
+import com.teamsparta.todosecurityproject.domain.user.repository.UserRepository
 import com.teamsparta.todosecurityproject.exception.ModelNotFoundException
 import com.teamsparta.todosecurityproject.exception.UnauthorizedException
 import org.springframework.data.repository.findByIdOrNull
@@ -12,8 +13,9 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TodoService(
-    private val todoRepository: TodoRepository,
-    private val commentRepository: CommentRepository,
+    val todoRepository: TodoRepository,
+    val commentRepository: CommentRepository,
+    val userRepository: UserRepository
 
     ) {
     fun getAllTodoCards() : List<TodoCardResponse> {
@@ -28,11 +30,17 @@ class TodoService(
     }
 
     @Transactional
-    fun createTodoCard(request: CreateTodoCardRequest): TodoCardResponse {
+    fun createTodoCard(createTodoCardRequest: CreateTodoCardRequest): TodoCardResponse {
+        val user =
+            userRepository.findByIdOrNull(createTodoCardRequest.userId) ?: throw ModelNotFoundException(
+                "User",
+                createTodoCardRequest.userId
+            )
+
         val todoCard = TodoCard(
-            title = request.title,
-            description = request.description,
-            user = request.user
+            title = createTodoCardRequest.title,
+            description = createTodoCardRequest.description,
+            user = user
         )
 
         return todoRepository.save(todoCard).toResponse()
@@ -43,8 +51,8 @@ class TodoService(
         val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
         todoCard.updateTodoCardField(updateTodoCardRequest)
 
-        if (todoCard.user.id != updateTodoCardRequest.user.id)
-            throw UnauthorizedException("Cannot modify TodoCard because you do not have user rights.")
+        if (todoCard.user.id != updateTodoCardRequest.userId)
+            throw UnauthorizedException("You do not have permission to modify.")
 
         return todoCard.toResponse()
     }

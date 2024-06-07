@@ -10,5 +10,5 @@ data class UpdateTodoCardRequest (
     @field: Size(min = 1, max = 1000, message = "Please enter at least 1 character and less than 1000 characters")
     val description: String,
 
-    val user: User
+    val userId: Long
 )
