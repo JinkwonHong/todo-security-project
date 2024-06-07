@@ -33,7 +33,7 @@ class TodoController(
     }
 
     @PostMapping
-    fun CreateTodoCard(
+    fun createTodoCard(
         @Valid @RequestBody createTodoCardRequest: CreateTodoCardRequest
     ): ResponseEntity<TodoCardResponse> {
         return ResponseEntity
