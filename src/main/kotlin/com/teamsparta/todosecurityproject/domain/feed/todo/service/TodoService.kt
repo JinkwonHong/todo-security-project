@@ -48,4 +48,11 @@ class TodoService(
 
         return todoCard.toResponse()
     }
+
+    @Transactional
+    fun deleteTodoCard(todoCardId: Long) {
+        val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
+
+        todoRepository.delete(todoCard)
+    }
 }

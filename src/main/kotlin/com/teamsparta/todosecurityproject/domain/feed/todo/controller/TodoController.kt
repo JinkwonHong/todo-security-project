@@ -50,4 +50,14 @@ class TodoController(
             .status(HttpStatus.CREATED)
             .body(todoService.updateTodoCard(todoCardId, updateTodoCardRequest))
     }
+
+    @DeleteMapping("/{todoCardId}")
+    fun deleteTodoCard(
+        @PathVariable todoCardId: Long
+    ): ResponseEntity<Unit> {
+        todoService.deleteTodoCard(todoCardId)
+        return ResponseEntity
+            .status(HttpStatus.NO_CONTENT)
+            .build()
+    }
 }
