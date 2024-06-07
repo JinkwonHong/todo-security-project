@@ -2,6 +2,7 @@ package com.teamsparta.todosecurityproject.domain.feed.comment.controller
 
 import com.teamsparta.todosecurityproject.domain.feed.comment.dto.CommentResponse
 import com.teamsparta.todosecurityproject.domain.feed.comment.dto.CreateCommentRequest
+import com.teamsparta.todosecurityproject.domain.feed.comment.dto.UpdateCommentRequest
 import com.teamsparta.todosecurityproject.domain.feed.comment.service.CommentService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -21,4 +22,13 @@ class CommentController(
             .body(commentService.createComment(todoCardId, createCommentRequest))
     }
 
+    @PutMapping("/{commentId}")
+    fun updateComment(@PathVariable todoCardId: Long, @PathVariable commentId: Long,
+                      @RequestBody updateCommentRequest: UpdateCommentRequest
+    ): ResponseEntity<CommentResponse> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(commentService.updateComment(todoCardId, commentId, updateCommentRequest))
+
+    }
 }
