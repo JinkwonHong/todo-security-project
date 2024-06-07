@@ -1,5 +1,6 @@
 package com.teamsparta.todosecurityproject.domain.user.model
 
+import com.teamsparta.todosecurityproject.domain.user.dto.UserResponse
 import jakarta.persistence.*
 
 @Entity
@@ -17,4 +18,11 @@ class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
+
+    fun toResponse(): UserResponse {
+        return UserResponse(
+            id = this.id ?: throw IllegalStateException("User ID cannot be null"),
+            nickname = this.nickname,
+        )
+    }
 }
