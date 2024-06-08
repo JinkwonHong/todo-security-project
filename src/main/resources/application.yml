@@ -22,3 +22,8 @@ logging:
             bind: trace
       springframework:
         security: debug
+auth:
+  jwt:
+    issuer: team.sparta.com
+    secret: J13s2z82HSa5gJG32eSfJbRYBB4Wsgas
+    accessTokenExpirationHour: 72
