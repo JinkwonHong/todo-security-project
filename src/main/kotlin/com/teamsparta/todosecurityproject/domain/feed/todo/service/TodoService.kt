@@ -7,7 +7,9 @@ import com.teamsparta.todosecurityproject.domain.feed.todo.repository.TodoReposi
 import com.teamsparta.todosecurityproject.domain.user.repository.UserRepository
 import com.teamsparta.todosecurityproject.exception.ModelNotFoundException
 import com.teamsparta.todosecurityproject.exception.UnauthorizedException
+import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -18,6 +20,8 @@ class TodoService(
     val userRepository: UserRepository
 
     ) {
+    private val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+
     fun getAllTodoCards() : List<TodoCardResponse> {
         return todoRepository.findAllByOrderByCreatedAtDesc().map { it.toResponse() }
     }
@@ -51,8 +55,7 @@ class TodoService(
         val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
         todoCard.updateTodoCardField(updateTodoCardRequest)
 
-        if (todoCard.user.id != updateTodoCardRequest.userId)
-            throw UnauthorizedException("You do not have permission to modify.")
+        if (todoCard.user.id != userPrincipal.id) throw UnauthorizedException("You do not have permission to modify.")
 
         return todoCard.toResponse()
     }
@@ -60,6 +63,7 @@ class TodoService(
     @Transactional
     fun deleteTodoCard(todoCardId: Long) {
         val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
+        if (todoCard.user.id != userPrincipal.id) throw UnauthorizedException("You do not have permission to modify.")
 
         todoRepository.delete(todoCard)
     }

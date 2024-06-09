@@ -9,7 +9,9 @@ import com.teamsparta.todosecurityproject.domain.feed.todo.repository.TodoReposi
 import com.teamsparta.todosecurityproject.domain.user.repository.UserRepository
 import com.teamsparta.todosecurityproject.exception.ModelNotFoundException
 import com.teamsparta.todosecurityproject.exception.UnauthorizedException
+import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,6 +21,8 @@ class CommentService(
     val todoRepository: TodoRepository,
     val userRepository: UserRepository
 ) {
+    private val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+
     @Transactional
     fun createComment(todoCardId: Long, createCommentRequest: CreateCommentRequest): CommentResponse {
         val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
@@ -45,7 +49,7 @@ class CommentService(
         todoRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
 
-        if (comment.user.id != updateCommentRequest.userId )
+        if (comment.user.id != userPrincipal.id )
             throw UnauthorizedException("You do not have permission to modify.")
 
         comment.content = updateCommentRequest.content
