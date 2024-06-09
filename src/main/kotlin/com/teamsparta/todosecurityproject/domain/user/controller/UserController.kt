@@ -17,7 +17,7 @@ class UserController(
             .body(userService.signIn(loginRequest))
     }
 
-    @PostMapping("/signUp")
+    @PostMapping("/signup")
     fun signUp(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<UserResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
