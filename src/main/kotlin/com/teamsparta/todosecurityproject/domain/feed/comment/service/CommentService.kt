@@ -21,7 +21,7 @@ class CommentService(
     val todoRepository: TodoRepository,
     val userRepository: UserRepository
 ) {
-    private val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+    private val userPrincipal = SecurityContextHolder.getContext().authentication?.principal as UserPrincipal?
 
     @Transactional
     fun createComment(todoCardId: Long, createCommentRequest: CreateCommentRequest): CommentResponse {
@@ -49,7 +49,7 @@ class CommentService(
         todoRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
 
-        if (comment.user.id != userPrincipal.id )
+        if (comment.user.id != userPrincipal?.id )
             throw UnauthorizedException("You do not have permission to modify.")
 
         comment.content = updateCommentRequest.content
