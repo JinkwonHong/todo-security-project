@@ -20,8 +20,6 @@ class TodoService(
     val userRepository: UserRepository
 
     ) {
-    private val userPrincipal = SecurityContextHolder.getContext().authentication?.principal as UserPrincipal?
-
     fun getAllTodoCards() : List<TodoCardResponse> {
         return todoRepository.findAllByOrderByCreatedAtDesc().map { it.toResponse() }
     }
@@ -52,18 +50,24 @@ class TodoService(
 
     @Transactional
     fun updateTodoCard(todoCardId: Long, updateTodoCardRequest: UpdateTodoCardRequest): TodoCardResponse {
+
+        val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+
         val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
         todoCard.updateTodoCardField(updateTodoCardRequest)
 
-        if (todoCard.user.id != userPrincipal?.id) throw UnauthorizedException("You do not have permission to modify.")
+        if (todoCard.user.id != userPrincipal.id) throw UnauthorizedException("You do not have permission to modify.")
 
         return todoCard.toResponse()
     }
 
     @Transactional
     fun deleteTodoCard(todoCardId: Long) {
+
+        val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+
         val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
-        if (todoCard.user.id != userPrincipal?.id) throw UnauthorizedException("You do not have permission to modify.")
+        if (todoCard.user.id != userPrincipal.id) throw UnauthorizedException("You do not have permission to modify.")
 
         todoRepository.delete(todoCard)
     }
