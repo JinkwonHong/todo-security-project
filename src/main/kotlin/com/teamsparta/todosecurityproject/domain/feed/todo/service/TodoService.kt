@@ -21,7 +21,7 @@ class TodoService(
 
     ) {
     fun getAllTodoCards() : List<TodoCardResponse> {
-        return todoRepository.findAllByOrderByCreatedAtDesc().map { it.toResponse() }
+        return todoRepository.findAllWithComments().map { it.toResponse() }
     }
 
     fun getTodoCardById(todoCardId: Long): TodoCardResponseWithComments {
