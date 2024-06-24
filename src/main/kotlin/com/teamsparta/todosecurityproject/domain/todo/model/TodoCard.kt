@@ -1,6 +1,6 @@
 package com.teamsparta.todosecurityproject.domain.todo.model
 
-import com.teamsparta.todosecurityproject.common.model.BaseTime
+import com.teamsparta.todosecurityproject.common.model.BasedTime
 import com.teamsparta.todosecurityproject.domain.todo.comment.model.Comment
 import com.teamsparta.todosecurityproject.domain.todo.dto.UpdateTodoCardRequest
 import com.teamsparta.todosecurityproject.domain.user.model.User
@@ -20,7 +20,7 @@ class TodoCard(
 
     @OneToMany
     val comments: MutableList<Comment> = mutableListOf()
-) : BaseTime() {
+) : BasedTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
