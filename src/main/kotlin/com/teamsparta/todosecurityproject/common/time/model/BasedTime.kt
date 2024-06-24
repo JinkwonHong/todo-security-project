@@ -1,4 +1,4 @@
-package com.teamsparta.todosecurityproject.common.model
+package com.teamsparta.todosecurityproject.common.time.model
 
 import java.time.ZoneId
 import java.time.ZonedDateTime

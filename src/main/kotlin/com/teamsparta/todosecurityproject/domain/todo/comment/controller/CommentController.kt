@@ -4,9 +4,11 @@ import com.teamsparta.todosecurityproject.domain.todo.comment.dto.CommentRespons
 import com.teamsparta.todosecurityproject.domain.todo.comment.dto.CreateCommentRequest
 import com.teamsparta.todosecurityproject.domain.todo.comment.dto.UpdateCommentRequest
 import com.teamsparta.todosecurityproject.domain.todo.comment.service.CommentService
+import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/v2/todos/{todoCardId}/comments")
@@ -16,20 +18,35 @@ class CommentController(
 ) {
     @PostMapping
     fun createComment(
-        @PathVariable todoCardId: Long, @Valid @RequestBody createCommentRequest: CreateCommentRequest
+        @AuthenticationPrincipal principal: UserPrincipal,
+        @PathVariable todoCardId: Long,
+        @RequestBody createCommentRequest: CreateCommentRequest
     ): ResponseEntity<CommentResponse> {
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(commentService.createComment(todoCardId, createCommentRequest))
+            .body(commentService.createComment(principal.id, todoCardId, createCommentRequest))
     }
 
     @PutMapping("/{commentId}")
-    fun updateComment(@PathVariable todoCardId: Long, @PathVariable commentId: Long,
-                      @RequestBody updateCommentRequest: UpdateCommentRequest
+    fun updateComment(
+        @AuthenticationPrincipal principal: UserPrincipal,
+        @PathVariable todoCardId: Long, @PathVariable commentId: Long,
+        @RequestBody updateCommentRequest: UpdateCommentRequest
     ): ResponseEntity<CommentResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(commentService.updateComment(todoCardId, commentId, updateCommentRequest))
+            .body(commentService.updateComment(principal.id, todoCardId, commentId, updateCommentRequest))
 
+    }
+
+    @DeleteMapping("/{commentId}")
+    fun deleteComment(
+        @AuthenticationPrincipal principal: UserPrincipal,
+        @PathVariable todoCardId: Long, @PathVariable commentId: Long
+    ): ResponseEntity<Unit> {
+        commentService.deleteComment(principal.id, todoCardId, commentId)
+        return ResponseEntity
+            .status(HttpStatus.NO_CONTENT)
+            .build()
     }
 }
