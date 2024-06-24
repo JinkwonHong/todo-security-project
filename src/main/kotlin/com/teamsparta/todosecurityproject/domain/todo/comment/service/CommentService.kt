@@ -9,6 +9,7 @@ import com.teamsparta.todosecurityproject.domain.todo.repository.TodoRepository
 import com.teamsparta.todosecurityproject.domain.user.repository.UserRepository
 import com.teamsparta.todosecurityproject.common.exception.ModelNotFoundException
 import com.teamsparta.todosecurityproject.common.exception.UnauthorizedException
+import com.teamsparta.todosecurityproject.domain.todo.model.TodoCard
 import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
@@ -23,7 +24,7 @@ class CommentService(
 ) {
     @Transactional
     fun createComment(userId: Long, todoCardId: Long, request: CreateCommentRequest): CommentResponse {
-        val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
+        val todoCard = findTodoCardById(todoCardId)
         val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User", userId)
         val (content) = request
 
@@ -33,21 +34,35 @@ class CommentService(
 
     @Transactional
     fun updateComment(
-        postId: Long,
+        userId: Long,
+        todoCardId: Long,
         commentId: Long,
-        updateCommentRequest: UpdateCommentRequest
+        request: UpdateCommentRequest
     ): CommentResponse {
+        findTodoCardById(todoCardId)
 
-        val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+        val comment = findCommentById(commentId)
+        checkUserAuthority(userId, comment)
 
-        todoRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
-        val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
-
-        if (comment.user.id != userPrincipal.id)
-            throw UnauthorizedException("You do not have permission to modify.")
-
-        comment.content = updateCommentRequest.content
+        val (content) = request
+        comment.updateComment(content = content)
 
         return CommentResponse.from(comment)
+    }
+
+    private fun findTodoCardById(todoCardId: Long): TodoCard {
+        return todoRepository.findByIdOrNull(todoCardId)
+            ?: throw ModelNotFoundException("Comment", todoCardId)
+    }
+
+    private fun findCommentById(commentId: Long): Comment {
+        return commentRepository.findByIdOrNull(commentId)
+            ?: throw ModelNotFoundException("Comment", commentId)
+    }
+
+    private fun checkUserAuthority(userId: Long, comment: Comment) {
+        if (comment.user.id != userId) {
+            throw UnauthorizedException("You do not have permission to modify.")
+        }
     }
 }

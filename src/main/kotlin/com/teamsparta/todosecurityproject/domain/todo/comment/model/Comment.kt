@@ -1,8 +1,6 @@
 package com.teamsparta.todosecurityproject.domain.todo.comment.model
 
 import com.teamsparta.todosecurityproject.common.model.BasedTime
-import com.teamsparta.todosecurityproject.domain.todo.comment.dto.CommentResponse
-import com.teamsparta.todosecurityproject.domain.todo.dto.toResponse
 import com.teamsparta.todosecurityproject.domain.todo.model.TodoCard
 import com.teamsparta.todosecurityproject.domain.user.model.User
 import jakarta.persistence.*
@@ -40,15 +38,9 @@ class Comment(
             return comment
         }
     }
-}
-
-
-fun Comment.toResponse(): CommentResponse {
-    return CommentResponse(
-        content = content,
-        user = user.toResponse(),
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-        todoCard = todoCard.toResponse()
-    )
+    fun updateComment(content: String) {
+        checkContentLength(content)
+        this.content = content
+        this.setUpdatedAt()
+    }
 }

@@ -11,7 +11,7 @@ data class CommentResponse(
     val createdAt: ZonedDateTime?,
     val updatedAt: ZonedDateTime?,
     val user: UserResponse,
-    val  todoCard: TodoCardResponse,
+    val todoCard: TodoCardResponse,
 ) {
     companion object {
         fun from(comment: Comment): CommentResponse {
@@ -25,3 +25,13 @@ data class CommentResponse(
         }
     }
 }
+
+/* fun Comment.toResponse(): CommentResponse {
+    return CommentResponse(
+        content = content,
+        user = user.toResponse(),
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        todoCard = todoCard.toResponse()
+    )
+} */

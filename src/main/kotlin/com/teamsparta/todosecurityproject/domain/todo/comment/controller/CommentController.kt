@@ -20,7 +20,7 @@ class CommentController(
     fun createComment(
         @AuthenticationPrincipal principal: UserPrincipal,
         @PathVariable todoCardId: Long,
-        @Valid @RequestBody createCommentRequest: CreateCommentRequest
+        @RequestBody createCommentRequest: CreateCommentRequest
     ): ResponseEntity<CommentResponse> {
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -29,12 +29,13 @@ class CommentController(
 
     @PutMapping("/{commentId}")
     fun updateComment(
+        @AuthenticationPrincipal principal: UserPrincipal,
         @PathVariable todoCardId: Long, @PathVariable commentId: Long,
         @RequestBody updateCommentRequest: UpdateCommentRequest
     ): ResponseEntity<CommentResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(commentService.updateComment(todoCardId, commentId, updateCommentRequest))
+            .body(commentService.updateComment(principal.id, todoCardId, commentId, updateCommentRequest))
 
     }
 }
