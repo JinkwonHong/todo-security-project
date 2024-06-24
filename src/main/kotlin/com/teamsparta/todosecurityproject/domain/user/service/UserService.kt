@@ -3,7 +3,7 @@ package com.teamsparta.todosecurityproject.domain.user.service
 import com.teamsparta.todosecurityproject.domain.user.dto.*
 import com.teamsparta.todosecurityproject.domain.user.model.User
 import com.teamsparta.todosecurityproject.domain.user.repository.UserRepository
-import com.teamsparta.todosecurityproject.exception.ModelNotFoundException
+import com.teamsparta.todosecurityproject.common.exception.ModelNotFoundException
 import com.teamsparta.todosecurityproject.infra.security.jwt.JwtPlugin
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
