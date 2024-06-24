@@ -51,13 +51,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    runtimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
 
