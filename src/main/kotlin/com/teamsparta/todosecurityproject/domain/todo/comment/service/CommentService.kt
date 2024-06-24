@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CommentService(
-    val commentRepository: CommentRepository,
-    val todoRepository: TodoRepository,
-    val userRepository: UserRepository
+    val commentRepository: CommentRepository, val todoRepository: TodoRepository, val userRepository: UserRepository
 ) {
     @Transactional
     fun createComment(userId: Long, todoCardId: Long, request: CreateCommentRequest): CommentResponse {
@@ -34,13 +32,9 @@ class CommentService(
 
     @Transactional
     fun updateComment(
-        userId: Long,
-        todoCardId: Long,
-        commentId: Long,
-        request: UpdateCommentRequest
+        userId: Long, todoCardId: Long, commentId: Long, request: UpdateCommentRequest
     ): CommentResponse {
         findTodoCardById(todoCardId)
-
         val comment = findCommentById(commentId)
         checkUserAuthority(userId, comment)
 
@@ -50,19 +44,26 @@ class CommentService(
         return CommentResponse.from(comment)
     }
 
+    @Transactional
+    fun deleteComment(userId: Long, todoCardId: Long, commentId: Long) {
+        findTodoCardById(todoCardId)
+        val comment = findCommentById(commentId)
+        checkUserAuthority(userId, comment)
+
+        commentRepository.delete(comment)
+    }
+
     private fun findTodoCardById(todoCardId: Long): TodoCard {
-        return todoRepository.findByIdOrNull(todoCardId)
-            ?: throw ModelNotFoundException("Comment", todoCardId)
+        return todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("Comment", todoCardId)
     }
 
     private fun findCommentById(commentId: Long): Comment {
-        return commentRepository.findByIdOrNull(commentId)
-            ?: throw ModelNotFoundException("Comment", commentId)
+        return commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
     }
 
     private fun checkUserAuthority(userId: Long, comment: Comment) {
         if (comment.user.id != userId) {
-            throw UnauthorizedException("You do not have permission to modify.")
+            throw UnauthorizedException("You do not have access.")
         }
     }
 }

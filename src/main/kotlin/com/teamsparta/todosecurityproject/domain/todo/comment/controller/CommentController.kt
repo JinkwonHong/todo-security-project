@@ -38,4 +38,15 @@ class CommentController(
             .body(commentService.updateComment(principal.id, todoCardId, commentId, updateCommentRequest))
 
     }
+
+    @DeleteMapping("/{commentId}")
+    fun deleteComment(
+        @AuthenticationPrincipal principal: UserPrincipal,
+        @PathVariable todoCardId: Long, @PathVariable commentId: Long
+    ): ResponseEntity<Unit> {
+        commentService.deleteComment(principal.id, todoCardId, commentId)
+        return ResponseEntity
+            .status(HttpStatus.NO_CONTENT)
+            .build()
+    }
 }
