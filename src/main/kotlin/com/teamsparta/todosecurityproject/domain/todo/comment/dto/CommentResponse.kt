@@ -5,11 +5,12 @@ import com.teamsparta.todosecurityproject.domain.todo.dto.TodoCardResponse
 import com.teamsparta.todosecurityproject.domain.todo.dto.toResponse
 import com.teamsparta.todosecurityproject.domain.user.dto.UserResponse
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 data class CommentResponse(
     val content: String,
-    val createdAt: LocalDateTime?,
-    val updatedAt: LocalDateTime?,
+    val createdAt: ZonedDateTime?,
+    val updatedAt: ZonedDateTime?,
     val user: UserResponse,
     val  todoCard: TodoCardResponse,
 ) {
