@@ -4,7 +4,6 @@ import com.teamsparta.todosecurityproject.domain.todo.comment.model.Comment
 import com.teamsparta.todosecurityproject.domain.todo.dto.TodoCardResponse
 import com.teamsparta.todosecurityproject.domain.todo.dto.toResponse
 import com.teamsparta.todosecurityproject.domain.user.dto.UserResponse
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 data class CommentResponse(
@@ -17,11 +16,11 @@ data class CommentResponse(
     companion object {
         fun from(comment: Comment): CommentResponse {
             return CommentResponse(
-                comment.content,
-                comment.createdAt,
-                comment.updatedAt,
-                comment.user.toResponse(),
-                comment.todoCard.toResponse()
+                content = comment.content,
+                createdAt = comment.createdAt,
+                updatedAt = comment.updatedAt,
+                user = comment.user.toResponse(),
+                todoCard = comment.todoCard.toResponse()
             )
         }
     }
