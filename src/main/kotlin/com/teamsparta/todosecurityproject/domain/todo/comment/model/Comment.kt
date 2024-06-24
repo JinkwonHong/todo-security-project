@@ -1,6 +1,6 @@
 package com.teamsparta.todosecurityproject.domain.todo.comment.model
 
-import com.teamsparta.todosecurityproject.common.model.BasedTime
+import com.teamsparta.todosecurityproject.common.time.model.BasedTime
 import com.teamsparta.todosecurityproject.domain.todo.model.TodoCard
 import com.teamsparta.todosecurityproject.domain.user.model.User
 import jakarta.persistence.*
