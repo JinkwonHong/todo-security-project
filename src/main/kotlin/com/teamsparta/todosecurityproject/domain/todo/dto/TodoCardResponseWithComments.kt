@@ -19,7 +19,7 @@ data class TodoCardResponseWithComments(
             return TodoCardResponseWithComments(
                 title = todoCard.title,
                 description = todoCard.description,
-                user = todoCard.user.toResponse(),
+                user = UserResponse.from(todoCard.user),
                 createdAt = todoCard.createdAt,
                 updatedAt = todoCard.updatedAt,
                 comments = todoCard.comments.map { CommentResponse.from(it) }

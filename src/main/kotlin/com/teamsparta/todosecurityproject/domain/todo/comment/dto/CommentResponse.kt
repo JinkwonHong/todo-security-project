@@ -18,7 +18,7 @@ data class CommentResponse(
                 content = comment.content,
                 createdAt = comment.createdAt,
                 updatedAt = comment.updatedAt,
-                user = comment.user.toResponse(),
+                user = UserResponse.from(comment.user),
                 todoCard = TodoCardResponse.from(comment.todoCard)
             )
         }

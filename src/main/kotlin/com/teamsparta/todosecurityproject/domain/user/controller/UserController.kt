@@ -29,7 +29,6 @@ class UserController(
     @PostMapping("/users/{userId}/profile")
     fun updateUserProfile(
         @AuthenticationPrincipal principal: UserPrincipal,
-        @PathVariable userId: Long,
         @RequestBody updateUserProfileRequest: UpdateUserProfileRequest
     ): ResponseEntity<UserResponse> {
         return ResponseEntity
