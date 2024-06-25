@@ -2,7 +2,6 @@ package com.teamsparta.todosecurityproject.domain.todo.comment.dto
 
 import com.teamsparta.todosecurityproject.domain.todo.comment.model.Comment
 import com.teamsparta.todosecurityproject.domain.todo.dto.TodoCardResponse
-import com.teamsparta.todosecurityproject.domain.todo.dto.toResponse
 import com.teamsparta.todosecurityproject.domain.user.dto.UserResponse
 import java.time.ZonedDateTime
 
@@ -20,18 +19,8 @@ data class CommentResponse(
                 createdAt = comment.createdAt,
                 updatedAt = comment.updatedAt,
                 user = comment.user.toResponse(),
-                todoCard = comment.todoCard.toResponse()
+                todoCard = TodoCardResponse.from(comment.todoCard)
             )
         }
     }
 }
-
-/* fun Comment.toResponse(): CommentResponse {
-    return CommentResponse(
-        content = content,
-        user = user.toResponse(),
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-        todoCard = todoCard.toResponse()
-    )
-} */
