@@ -7,6 +7,7 @@ import com.teamsparta.todosecurityproject.domain.todo.dto.*
 import com.teamsparta.todosecurityproject.domain.user.repository.UserRepository
 import com.teamsparta.todosecurityproject.common.exception.ModelNotFoundException
 import com.teamsparta.todosecurityproject.common.exception.UnauthorizedException
+import com.teamsparta.todosecurityproject.domain.todo.comment.dto.CommentResponse
 import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
@@ -20,55 +21,52 @@ class TodoService(
     val userRepository: UserRepository
 
     ) {
-    fun getAllTodoCards() : List<TodoCardResponse> {
-        return todoRepository.findAllWithComments().map { it.toResponse() }
+    fun getAllTodoCards(): List<TodoCardResponseWithComments> {
+        return todoRepository.findAllWithComments().map { TodoCardResponseWithComments.from(it) }
     }
 
     fun getTodoCardById(todoCardId: Long): TodoCardResponseWithComments {
-        val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
-        val comments = commentRepository.findAllByTodoCardIdOrderByCreatedAt(todoCardId)
+        val todoCard = findTodoCardById(todoCardId)
+        commentRepository.findAllByTodoCardIdOrderByCreatedAt(todoCardId)
 
-        return todoCard.toResponseWithComments(comments)
+        return TodoCardResponseWithComments.from(todoCard)
     }
 
     @Transactional
-    fun createTodoCard(createTodoCardRequest: CreateTodoCardRequest): TodoCardResponse {
-        val user =
-            userRepository.findByIdOrNull(createTodoCardRequest.userId) ?: throw ModelNotFoundException(
-                "User",
-                createTodoCardRequest.userId
-            )
+    fun createTodoCard(userId: Long, request: CreateTodoCardRequest): TodoCardResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User", userId)
+        val (title, description) = request
+        val todoCard = TodoCard.of(title = title, description = description, user = user)
 
-        val todoCard = TodoCard(
-            title = createTodoCardRequest.title,
-            description = createTodoCardRequest.description,
-            user = user
-        )
-
-        return todoRepository.save(todoCard).toResponse()
+        return TodoCardResponse.from(todoRepository.save(todoCard))
     }
 
     @Transactional
-    fun updateTodoCard(todoCardId: Long, updateTodoCardRequest: UpdateTodoCardRequest): TodoCardResponse {
+    fun updateTodoCard(userId: Long, todoCardId: Long, request: UpdateTodoCardRequest): TodoCardResponse {
+        val todoCard = findTodoCardById(todoCardId)
+        checkUserAuthority(userId, todoCard)
+        val (title, description) = request
+        todoCard.updateTodoCard(title= title, description = description)
 
-        val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
-
-        val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
-        todoCard.updateTodoCardField(updateTodoCardRequest)
-
-        if (todoCard.user.id != userPrincipal.id) throw UnauthorizedException("You do not have permission to modify.")
-
-        return todoCard.toResponse()
+        return TodoCardResponse.from(todoRepository.save(todoCard))
     }
 
     @Transactional
-    fun deleteTodoCard(todoCardId: Long) {
+    fun deleteTodoCard(userId: Long, todoCardId: Long) {
 
-        val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
-
-        val todoCard = todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("todoCard", todoCardId)
-        if (todoCard.user.id != userPrincipal.id) throw UnauthorizedException("You do not have permission to modify.")
+        val todoCard = findTodoCardById(todoCardId)
+        checkUserAuthority(userId, todoCard)
 
         todoRepository.delete(todoCard)
+    }
+
+    private fun findTodoCardById(todoCardId: Long): TodoCard {
+        return todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("TodoCard", todoCardId)
+    }
+
+    private fun checkUserAuthority(userId: Long, todoCard: TodoCard) {
+        if (todoCard.user.id != userId) {
+            throw UnauthorizedException("You do not have access.")
+        }
     }
 }
