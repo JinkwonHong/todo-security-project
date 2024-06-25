@@ -10,9 +10,7 @@ import com.teamsparta.todosecurityproject.domain.user.repository.UserRepository
 import com.teamsparta.todosecurityproject.common.exception.ModelNotFoundException
 import com.teamsparta.todosecurityproject.common.exception.UnauthorizedException
 import com.teamsparta.todosecurityproject.domain.todo.model.TodoCard
-import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -54,7 +52,7 @@ class CommentService(
     }
 
     private fun findTodoCardById(todoCardId: Long): TodoCard {
-        return todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("Comment", todoCardId)
+        return todoRepository.findByIdOrNull(todoCardId) ?: throw ModelNotFoundException("TodoCard", todoCardId)
     }
 
     private fun findCommentById(commentId: Long): Comment {

@@ -1,8 +1,10 @@
 package com.teamsparta.todosecurityproject.common.time.model
 
+import jakarta.persistence.MappedSuperclass
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
+@MappedSuperclass
 abstract class BasedTime {
 
     var createdAt: ZonedDateTime? = null

@@ -5,7 +5,6 @@ import com.teamsparta.todosecurityproject.domain.todo.comment.dto.CreateCommentR
 import com.teamsparta.todosecurityproject.domain.todo.comment.dto.UpdateCommentRequest
 import com.teamsparta.todosecurityproject.domain.todo.comment.service.CommentService
 import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
-import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
