@@ -29,15 +29,18 @@ class UserService(
     }
 
     @Transactional
-    fun signUp(signUpRequest: SignUpRequest): UserResponse {
-        if (userRepository.existsByEmail(signUpRequest.email)) throw IllegalStateException("Email is already in use")
+    fun signUp(request: SignUpRequest): UserResponse {
 
-        val user = User(
-            email = signUpRequest.email,
-            password = passwordEncoder.encode(signUpRequest.password),
-            nickname = signUpRequest.nickname
+        val (email, password, nickname) = request
+        if (userRepository.existsByEmail(email)) throw IllegalStateException("Email: '${email}' is already in use")
+        val encodedPassword = passwordEncoder.encode(password)
+
+        val user = User.of(
+            email = email,
+            password = encodedPassword,
+            nickname = nickname
         )
-        return userRepository.save(user).toResponse()
+        return UserResponse.from(userRepository.save(user))
     }
 
     @Transactional
