@@ -19,10 +19,26 @@ class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    fun toResponse(): UserResponse {
-        return UserResponse(
-            id = this.id ?: throw IllegalStateException("User ID cannot be null"),
-            nickname = this.nickname,
-        )
+    fun updateProfile(newNickName: String) {
+        this.nickname = newNickName
+    }
+
+    companion object {
+        private fun checkAccountEmail(newAccountEmail: String) {
+            if (!newAccountEmail.matches("^[a-z0-9]{4,10}@[a-z0-9]+(\\.[a-z]{2,6})$".toRegex())) {
+                throw IllegalArgumentException("Invalid account EMAIL.")
+            }
+        }
+
+        fun of(
+            email: String,
+            password: String,
+            nickname: String,
+        ): User {
+            checkAccountEmail(email)
+            return User(
+                email = email, password = password, nickname = nickname
+            )
+        }
     }
 }

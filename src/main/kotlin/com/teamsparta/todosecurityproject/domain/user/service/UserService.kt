@@ -12,39 +12,45 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService(
-    val userRepository: UserRepository,
-    val passwordEncoder: PasswordEncoder,
-    val jwtPlugin: JwtPlugin
+    val userRepository: UserRepository, val passwordEncoder: PasswordEncoder, val jwtPlugin: JwtPlugin
 ) {
-    @Transactional
-    fun signIn(loginRequest: LoginRequest): LoginResponse {
-        val user = userRepository.findByEmail(loginRequest.email) ?: throw ModelNotFoundException("User", null)
+    fun signIn(request: LoginRequest): LoginResponse {
+        val (email, password) = request
+        val user = userRepository.findByEmail(email)?.takeIf { passwordEncoder.matches(password, it.password) }
+            ?: throw IllegalArgumentException("Please check your email and password")
 
-        return LoginResponse(
-            accessToken = jwtPlugin.generateAccessToken(
-                subject = user.id.toString(),
-                email = user.email
-            )
-        )
+        return LoginResponse(accessToken = jwtPlugin.generateAccessToken(user.id.toString(), user.email))
     }
 
     @Transactional
-    fun signUp(signUpRequest: SignUpRequest): UserResponse {
-        if (userRepository.existsByEmail(signUpRequest.email)) throw IllegalStateException("Email is already in use")
+    fun signUp(request: SignUpRequest): UserResponse {
 
-        val user = User(
-            email = signUpRequest.email,
-            password = passwordEncoder.encode(signUpRequest.password),
-            nickname = signUpRequest.nickname
+        val (email, password, nickname) = request
+        if (userRepository.existsByEmail(email)) throw IllegalArgumentException("Email: '${email}' is already in use")
+        checkPasswordRule(password)
+        val encodedPassword = passwordEncoder.encode(password)
+
+        val user = User.of(
+            email = email, password = encodedPassword, nickname = nickname
         )
-        return userRepository.save(user).toResponse()
+        return UserResponse.from(userRepository.save(user))
     }
 
     @Transactional
-    fun updateUserProfile(userId: Long, updateUserProfileRequest: UpdateUserProfileRequest): UserResponse {
+    fun updateUserProfile(userId: Long, request: UpdateUserProfileRequest): UserResponse {
+        val (password, nickname) = request
         val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User", userId)
-        user.nickname = updateUserProfileRequest.nickname
+        if (!passwordEncoder.matches(password, user.password)) {
+            throw IllegalArgumentException("Please check your password.")
+        }
+        user.updateProfile(nickname)
 
-        return user.toResponse()
+        return UserResponse.from(user)
+    }
+
+    private fun checkPasswordRule(password: String) {
+        if (!password.matches("^[a-zA-Z0-9!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]{8,15}\$".toRegex())) {
+            throw IllegalArgumentException("Invalid Password.")
+        }
     }
 }
