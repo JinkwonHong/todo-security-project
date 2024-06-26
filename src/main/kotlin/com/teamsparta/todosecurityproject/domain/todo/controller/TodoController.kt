@@ -13,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 
 @RequestMapping("/api/v2/todos")
 @RestController
@@ -24,30 +26,25 @@ class TodoController(
         @RequestParam(required = false) keyword: String?,
         @RequestParam(required = false) category: Category?,
         @RequestParam(required = false) completed: Boolean?,
-        @RequestParam(defaultValue = "0") pageNumber: Int,
-        @RequestParam(defaultValue = "7") pageSize: Int
+        @RequestParam(required = false, defaultValue = "createdAt") sort: String,
+        @PageableDefault(size = 10) pageable: Pageable
     ): ResponseEntity<Page<TodoCardResponseWithComments>> {
-        val pageable = PageRequest.of(pageNumber, pageSize)
-        val result = todoService.findAllTodoCardsWithFilters(keyword, category, completed, pageable)
-        return ResponseEntity.ok(result)
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(todoService.findAllTodoCardsWithFilters(keyword, category, completed, sort, pageable))
     }
 
     @GetMapping("/{todoCardId}")
     fun getTodoCardById(
         @PathVariable todoCardId: Long,
     ): ResponseEntity<TodoCardResponseWithComments> {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(todoService.getTodoCardById(todoCardId))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoCardById(todoCardId))
     }
 
     @PostMapping
     fun createTodoCard(
-        @AuthenticationPrincipal principal: UserPrincipal,
-        @RequestBody createTodoCardRequest: CreateTodoCardRequest
+        @AuthenticationPrincipal principal: UserPrincipal, @RequestBody createTodoCardRequest: CreateTodoCardRequest
     ): ResponseEntity<TodoCardResponse> {
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED)
             .body(todoService.createTodoCard(principal.id, createTodoCardRequest))
     }
 
@@ -57,19 +54,15 @@ class TodoController(
         @PathVariable todoCardId: Long,
         @RequestBody updateTodoCardRequest: UpdateTodoCardRequest
     ): ResponseEntity<TodoCardResponse> {
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED)
             .body(todoService.updateTodoCard(principal.id, todoCardId, updateTodoCardRequest))
     }
 
     @DeleteMapping("/{todoCardId}")
     fun deleteTodoCard(
-        @AuthenticationPrincipal principal: UserPrincipal,
-        @PathVariable todoCardId: Long
+        @AuthenticationPrincipal principal: UserPrincipal, @PathVariable todoCardId: Long
     ): ResponseEntity<Unit> {
         todoService.deleteTodoCard(principal.id, todoCardId)
-        return ResponseEntity
-            .status(HttpStatus.NO_CONTENT)
-            .build()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

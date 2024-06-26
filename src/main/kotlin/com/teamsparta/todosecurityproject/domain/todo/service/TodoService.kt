@@ -16,18 +16,13 @@ import org.springframework.data.domain.Pageable
 
 @Service
 class TodoService(
-    val todoRepository: TodoRepository,
-    val commentRepository: CommentRepository,
-    val userRepository: UserRepository
+    val todoRepository: TodoRepository, val commentRepository: CommentRepository, val userRepository: UserRepository
 
 ) {
     fun findAllTodoCardsWithFilters(
-        keyword: String?,
-        category: Category?,
-        completed: Boolean?,
-        pageable: Pageable
+        keyword: String?, category: Category?, completed: Boolean?, sort: String, pageable: Pageable
     ): Page<TodoCardResponseWithComments> {
-        val todoCards = todoRepository.findAllWithFilters(keyword, category, completed, pageable)
+        val todoCards = todoRepository.findAllWithFilters(keyword, category, completed, sort, pageable)
         return todoCards.map { TodoCardResponseWithComments.from(it) }
     }
 
