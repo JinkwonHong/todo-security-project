@@ -49,11 +49,13 @@ class TodoCard(
         }
     }
 
-    fun updateTodoCard(title: String, description: String) {
+    fun updateTodoCard(title: String, description: String, category: Category, completed: Boolean) {
         checkTitleLength(title)
         checkDescriptionLength(description)
         this.title = title
         this.description = description
+        this.category = category
+        this.completed = completed
         this.setUpdatedAt()
     }
 }
