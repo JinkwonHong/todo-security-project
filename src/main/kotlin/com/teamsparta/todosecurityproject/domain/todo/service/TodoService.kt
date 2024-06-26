@@ -35,8 +35,8 @@ class TodoService(
     @Transactional
     fun createTodoCard(userId: Long, request: CreateTodoCardRequest): TodoCardResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User", userId)
-        val (title, description) = request
-        val todoCard = TodoCard.of(title = title, description = description, user = user)
+        val (title, description, category) = request
+        val todoCard = TodoCard.of(title = title, description = description, category = category, user = user)
 
         return TodoCardResponse.from(todoRepository.save(todoCard))
     }
@@ -45,8 +45,8 @@ class TodoService(
     fun updateTodoCard(userId: Long, todoCardId: Long, request: UpdateTodoCardRequest): TodoCardResponse {
         val todoCard = findTodoCardById(todoCardId)
         checkUserAuthority(userId, todoCard)
-        val (title, description) = request
-        todoCard.updateTodoCard(title= title, description = description)
+        val (title, description, category, completed) = request
+        todoCard.updateTodoCard(title= title, description = description, category = category, completed = completed)
 
         return TodoCardResponse.from(todoRepository.save(todoCard))
     }
