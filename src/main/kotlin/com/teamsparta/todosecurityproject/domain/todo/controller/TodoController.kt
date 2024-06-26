@@ -5,24 +5,31 @@ import com.teamsparta.todosecurityproject.domain.todo.dto.CreateTodoCardRequest
 import com.teamsparta.todosecurityproject.domain.todo.dto.TodoCardResponse
 import com.teamsparta.todosecurityproject.domain.todo.dto.TodoCardResponseWithComments
 import com.teamsparta.todosecurityproject.domain.todo.dto.UpdateTodoCardRequest
+import com.teamsparta.todosecurityproject.domain.todo.model.Category
 import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
-import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 
 @RequestMapping("/api/v2/todos")
 @RestController
 class TodoController(
     private val todoService: TodoService
 ) {
-    @GetMapping
-    fun getAllTodoCards(
-    ): ResponseEntity<List<TodoCardResponseWithComments>> {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(todoService.getAllTodoCards())
+    @GetMapping("/search")
+    fun findAllTodoCardsWithFilters(
+        @RequestParam(required = false) keyword: String?,
+        @RequestParam(required = false) category: Category?,
+        @RequestParam(required = false) completed: Boolean?,
+        @RequestParam(defaultValue = "0") pageNumber: Int,
+        @RequestParam(defaultValue = "7") pageSize: Int
+    ): ResponseEntity<Page<TodoCardResponseWithComments>> {
+        val pageable = PageRequest.of(pageNumber, pageSize)
+        val result = todoService.findAllTodoCardsWithFilters(keyword, category, completed, pageable)
+        return ResponseEntity.ok(result)
     }
 
     @GetMapping("/{todoCardId}")
