@@ -6,7 +6,7 @@ enum class Category {
     WORK, STUDY, EXERCISE, PROMISE, OTHER;
 
     companion object {
-        fun fromString(category: String) : Category {
+        fun fromString(category: String): Category {
             return try {
                 valueOf(category.uppercase())
             } catch (e: IllegalArgumentException) {
