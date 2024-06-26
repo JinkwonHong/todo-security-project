@@ -38,23 +38,23 @@ class TodoCard(
             }
         }
 
-        fun of(title: String, description: String, user: User, category: Category): TodoCard {
+        fun of(title: String, description: String, user: User, category: String): TodoCard {
             checkTitleLength(title)
             checkDescriptionLength(description)
             val todoCard = TodoCard(
-                title = title, description = description, user = user, category = category
+                title = title, description = description, user = user, category = Category.fromString(category)
             )
             todoCard.setCreatedAt()
             return todoCard
         }
     }
 
-    fun updateTodoCard(title: String, description: String, category: Category, completed: Boolean) {
+    fun updateTodoCard(title: String, description: String, category: String, completed: Boolean) {
         checkTitleLength(title)
         checkDescriptionLength(description)
         this.title = title
         this.description = description
-        this.category = category
+        this.category = Category.fromString(category)
         this.completed = completed
         this.setUpdatedAt()
     }
