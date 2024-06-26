@@ -7,22 +7,23 @@ import com.teamsparta.todosecurityproject.domain.todo.dto.*
 import com.teamsparta.todosecurityproject.domain.user.repository.UserRepository
 import com.teamsparta.todosecurityproject.common.exception.ModelNotFoundException
 import com.teamsparta.todosecurityproject.common.exception.UnauthorizedException
-import com.teamsparta.todosecurityproject.domain.todo.comment.dto.CommentResponse
-import com.teamsparta.todosecurityproject.infra.security.UserPrincipal
+import com.teamsparta.todosecurityproject.domain.todo.model.Category
+import org.springframework.data.domain.Page
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.data.domain.Pageable
 
 @Service
 class TodoService(
-    val todoRepository: TodoRepository,
-    val commentRepository: CommentRepository,
-    val userRepository: UserRepository
+    val todoRepository: TodoRepository, val commentRepository: CommentRepository, val userRepository: UserRepository
 
-    ) {
-    fun getAllTodoCards(): List<TodoCardResponseWithComments> {
-        return todoRepository.findAllWithComments().map { TodoCardResponseWithComments.from(it) }
+) {
+    fun findAllTodoCardsWithFilters(
+        keyword: String?, category: Category?, completed: Boolean?, sort: String, pageable: Pageable
+    ): Page<TodoCardResponseWithComments> {
+        val todoCards = todoRepository.findAllWithFilters(keyword, category, completed, sort, pageable)
+        return todoCards.map { TodoCardResponseWithComments.from(it) }
     }
 
     fun getTodoCardById(todoCardId: Long): TodoCardResponseWithComments {
@@ -46,7 +47,7 @@ class TodoService(
         val todoCard = findTodoCardById(todoCardId)
         checkUserAuthority(userId, todoCard)
         val (title, description, category, completed) = request
-        todoCard.updateTodoCard(title= title, description = description, category = category, completed = completed)
+        todoCard.updateTodoCard(title = title, description = description, category = category, completed = completed)
 
         return TodoCardResponse.from(todoRepository.save(todoCard))
     }
