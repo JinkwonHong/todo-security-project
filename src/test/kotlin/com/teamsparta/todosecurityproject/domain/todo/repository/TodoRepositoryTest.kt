@@ -95,12 +95,19 @@ class TodoRepositoryTest @Autowired constructor(
     }
 
     @Test
-    fun `조회된 결과가 15개, 0Page 결과 확인`() {
+    fun `조회된 결과가 15개, pageSize 6일 때 0Page 결과 확인`() {
         // GIVEN
+        userRepository.saveAllAndFlush(DEFAULT_USER_LIST)
+        todoRepository.saveAllAndFlush(DEFAULT_TODOCARD_LIST)
 
         // WHEN
+        val result = todoRepository.findAllWithFilters(keyword = null, category = null, completed = null, sort = "createdAt", pageable = PageRequest.of(0,6))
 
         // THEN
+        result.content.size shouldBe 6
+        result.isLast shouldBe false
+        result.totalPages shouldBe 3
+        result.number shouldBe 0
     }
 
     @Test
