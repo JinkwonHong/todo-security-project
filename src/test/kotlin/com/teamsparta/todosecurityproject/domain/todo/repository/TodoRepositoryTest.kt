@@ -11,6 +11,7 @@ import com.teamsparta.todosecurityproject.infra.querydsl.QueryDslConfig
 import com.teamsparta.todosecurityproject.infra.querydsl.QueryDslSupport
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -51,10 +52,16 @@ class TodoRepositoryTest @Autowired constructor(
     @Test
     fun `입력한 Keyword 가 Title 또는 Description 에 포함되어 있을 경우 해당 TodoCard 모두 조회되는지 확인`() {
         // GIVEN
+        userRepository.saveAllAndFlush(DEFAULT_USER_LIST)
+        todoRepository.saveAllAndFlush(DEFAULT_TODOCARD_LIST)
 
         // WHEN
+        val pageable = PageRequest.ofSize(10)
+        val result = todoRepository.findAllWithFilters(keyword = "계획", category = null, completed = null, sort = "createdAt", pageable = pageable)
 
         // THEN
+        result.content.size shouldBe 5
+        result.content.forEach { it.title.contains("계획") || it.description.contains("계획") }
     }
 
     @Test
@@ -100,7 +107,7 @@ class TodoRepositoryTest @Autowired constructor(
         )
 
         private val DEFAULT_TODOCARD_LIST = listOf(
-            TodoCard(title = "06/24 오늘의 헬스 진행 계획", description = "벤치프레스 5세트, 덤벨프레스 5세트", user = DEFAULT_USER_LIST[0], comments = mutableListOf(), completed = false, category = Category.EXERCISE),
+            TodoCard(title = "06/24 오늘의 헬스 진행 계획", description = "벤치프레스 5세트, 덤벨프레스 5세트 계획", user = DEFAULT_USER_LIST[0], comments = mutableListOf(), completed = false, category = Category.EXERCISE),
             TodoCard(title = "06/24 공부 계획", description = "알고리즘 문제 풀기, 데이터베이스 복습", user = DEFAULT_USER_LIST[1], comments = mutableListOf(), completed = false, category = Category.STUDY),
             TodoCard(title = "06/24 직장 업무", description = "주간 보고서 작성, 회의 준비", user = DEFAULT_USER_LIST[0], comments = mutableListOf(), completed = true, category = Category.WORK),
             TodoCard(title = "06/24 친구와의 약속", description = "저녁 식사, 영화 보기", user = DEFAULT_USER_LIST[1], comments = mutableListOf(), completed = false, category = Category.PROMISE),
