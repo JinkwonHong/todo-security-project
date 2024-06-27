@@ -5,7 +5,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @MappedSuperclass
-abstract class BasedTime {
+abstract class BaseTime {
 
     var createdAt: ZonedDateTime? = null
     var updatedAt: ZonedDateTime? = null

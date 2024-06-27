@@ -1,6 +1,6 @@
 package com.teamsparta.todosecurityproject.domain.todo.model
 
-import com.teamsparta.todosecurityproject.common.time.model.BasedTime
+import com.teamsparta.todosecurityproject.common.time.model.BaseTime
 import com.teamsparta.todosecurityproject.domain.todo.comment.model.Comment
 import com.teamsparta.todosecurityproject.domain.user.model.User
 import jakarta.persistence.*
@@ -20,7 +20,7 @@ class TodoCard(
     @Column(name = "completed") var completed: Boolean = false,
 
     @Enumerated(EnumType.STRING) @Column(name = "category") var category: Category,
-) : BasedTime() {
+) : BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null

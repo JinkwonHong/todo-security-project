@@ -1,6 +1,6 @@
 package com.teamsparta.todosecurityproject.domain.todo.comment.model
 
-import com.teamsparta.todosecurityproject.common.time.model.BasedTime
+import com.teamsparta.todosecurityproject.common.time.model.BaseTime
 import com.teamsparta.todosecurityproject.domain.todo.model.TodoCard
 import com.teamsparta.todosecurityproject.domain.user.model.User
 import jakarta.persistence.*
@@ -15,7 +15,7 @@ class Comment(
 
     @ManyToOne @JoinColumn(name = "todo_id") val todoCard: TodoCard
 
-) : BasedTime() {
+) : BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
