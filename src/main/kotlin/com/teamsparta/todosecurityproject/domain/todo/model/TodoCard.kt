@@ -15,7 +15,7 @@ class TodoCard(
 
     @ManyToOne val user: User,
 
-    @OneToMany val comments: MutableList<Comment> = mutableListOf(),
+    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE]) val comments: MutableList<Comment> = mutableListOf(),
 
     @Column(name = "completed") var completed: Boolean = false,
 
