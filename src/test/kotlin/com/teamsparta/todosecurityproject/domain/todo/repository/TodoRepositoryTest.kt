@@ -67,19 +67,31 @@ class TodoRepositoryTest @Autowired constructor(
     @Test
     fun `Category 설정 시, 해당 Category 에 해당하는 TodoCard 모두 조회되는지 확인`() {
         // GIVEN
+        userRepository.saveAllAndFlush(DEFAULT_USER_LIST)
+        todoRepository.saveAllAndFlush(DEFAULT_TODOCARD_LIST)
 
         // WHEN
+        val pageable = PageRequest.ofSize(10)
+        val result = todoRepository.findAllWithFilters(keyword = null, category = Category.EXERCISE, completed = null, sort = "createdAt", pageable = pageable)
 
         // THEN
+        result.content.size shouldBe 3
+        result.content.forEach { it.category shouldBe Category.EXERCISE }
     }
 
     @Test
     fun `완료여부 False 를 조회할 경우, False 에 해당하는 TodoCard 모두 조회되는지 확인`() {
         // GIVEN
+        userRepository.saveAllAndFlush(DEFAULT_USER_LIST)
+        todoRepository.saveAllAndFlush(DEFAULT_TODOCARD_LIST)
 
         // WHEN
+        val pageable = PageRequest.ofSize(10)
+        val result = todoRepository.findAllWithFilters(keyword = null, category = null, completed = false, sort = "createdAt", pageable = pageable)
 
         // THEN
+        result.content.size shouldBe 9
+        result.content.forEach { it.completed shouldBe false }
     }
 
     @Test
