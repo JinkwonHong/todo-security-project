@@ -33,7 +33,7 @@ class TodoServiceTest @Autowired constructor (private val todoRepository: TodoRe
         userRepository.saveAllAndFlush(DEFAULT_USER_LIST)
         todoRepository.saveAllAndFlush(DEFAULT_TODOCARD_LIST)
 
-        val updateRequest = UpdateTodoCardRequest(title = "Updated Title", description = "Updated Description", category = "EXERCISE", completed = true)
+        val updateRequest = UpdateTodoCardRequest(title = "Update", description = "Updated Description", category = "EXERCISE", completed = true)
 
         // WHEN & THEN
         shouldThrow<UnauthorizedException> {
@@ -41,16 +41,23 @@ class TodoServiceTest @Autowired constructor (private val todoRepository: TodoRe
         }.let { it.message shouldBe "You do not have access." }
 
         val unchangedTodoCard = todoRepository.findById(DEFAULT_TODOCARD_LIST[0].id!!)
-        unchangedTodoCard.get().title shouldNotBe "Updated Title"
+        unchangedTodoCard.get().title shouldNotBe "Update"
     }
 
     @Test
-    fun `정상적으로 회원가입되는 시나리오 확인`() {
+    fun `TodoCard 가 정상적으로 Update 되는지 확인`() {
         // GIVEN
+        userRepository.saveAllAndFlush(DEFAULT_USER_LIST)
+        todoRepository.saveAllAndFlush(DEFAULT_TODOCARD_LIST)
+
+        val updateRequest = UpdateTodoCardRequest(title = "Update", description = "Updated Description", category = "EXERCISE", completed = true)
 
         // WHEN
+        todoService.updateTodoCard(DEFAULT_USER_LIST[0].id!!, DEFAULT_TODOCARD_LIST[0].id!!, updateRequest)
 
         // THEN
+        val changedTodoCard = todoRepository.findById(DEFAULT_TODOCARD_LIST[0].id!!)
+        changedTodoCard.get().title shouldBe "Update"
     }
 
     companion object {
