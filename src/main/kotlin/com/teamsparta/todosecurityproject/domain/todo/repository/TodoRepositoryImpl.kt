@@ -35,8 +35,9 @@ class TodoRepositoryImpl : CustomTodoRepository, QueryDslSupport() {
             else -> todoCard.createdAt.desc()
         }
 
-        val query = queryFactory.selectFrom(todoCard).where(whereClause).offset(pageable.offset)
-            .limit(pageable.pageSize.toLong()).orderBy(orderSpecifier).fetch()
+        val query = queryFactory.selectFrom(todoCard).leftJoin(todoCard.user).fetchJoin().leftJoin(todoCard.comments)
+            .fetchJoin().where(whereClause).offset(pageable.offset).limit(pageable.pageSize.toLong())
+            .orderBy(orderSpecifier).distinct().fetch()
 
         return PageImpl(query, pageable, totalCount)
     }
