@@ -22,7 +22,6 @@ import org.springframework.test.context.ActiveProfiles
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(value = [QueryDslConfig::class])
 @ActiveProfiles("test")
 class TodoServiceTest @Autowired constructor (private val todoRepository: TodoRepository, private val commentRepository: CommentRepository, private val userRepository: UserRepository){
     private val todoService = TodoService(todoRepository, commentRepository, userRepository)

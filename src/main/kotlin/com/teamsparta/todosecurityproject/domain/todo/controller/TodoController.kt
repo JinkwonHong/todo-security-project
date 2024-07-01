@@ -53,7 +53,7 @@ class TodoController(
         @PathVariable todoCardId: Long,
         @RequestBody updateTodoCardRequest: UpdateTodoCardRequest
     ): ResponseEntity<TodoCardResponse> {
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.OK)
             .body(todoService.updateTodoCard(principal.id, todoCardId, updateTodoCardRequest))
     }
 
