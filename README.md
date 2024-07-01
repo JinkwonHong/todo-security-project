@@ -1,9 +1,10 @@
-# 🚀 TodoApp Security Project (TodoApp Version 2)
+# 🚀 TodoApp Security Project (TodoApp Version 2) + Spring Plus 코드 개선 과제
 
 이번 프로젝트 미션은 이전 “투두앱 백엔드 서버 만들기” 프로젝트에 이어, “JWT 를 활용한 Security 구현”입니다.
 과제는 Refactoring, 테이블 간 관계 매핑, ERD 의 변화 등을 이유로 새로운 Repository 를 만들어 새롭게 작업을 진행하였으며 ‘Version 1’ 의 하단의 Url 참고 부탁드리겠습니다.
 - https://github.com/JinkownHong/todo-project.git
 
+지난 과제 관련 피드백과 과제의 요구사항을 반영하여 주특기 플러스 과제를 진행하였습니다.
 
 <img src="https://techcourse-storage.s3.ap-northeast-2.amazonaws.com/2020-03-16T10:41:53.786image.png" width="400">
 
@@ -55,24 +56,43 @@
     * [x] 자신의 할 일 수정, 삭제
     * [x] 자신의 댓글 수정, 삭제
 
-### STEP 4: 추가 구현 기능
+## STEP 4: Spring Plus 코드 개선 과제 진행 사항
 
-* [ ] Test 코드 추가하기
-	* [ ]  Entity Test 추가하기
-		* [ ] Entity의 method중 하나를 선택하여 test를 작성
-		* [ ] User, Todo, Comment, DTO에 존재하는 method에 대해 테스트를 작성
-		* [ ] 성공하는 경우, 실패하는 경우 모두를 고려하여 작성
-	* [ ]  Service Test 추가하기
-		* [ ] Service method중 하나를 선택하여 test를 작성
-		* [ ] repository를 mocking하여 테스트
-		* [ ] 성공하는 경우, 실패하는 경우 모두를 고려하여 작성
-	* [ ]   Controller Test 추가하기
-		* [ ] Controller의 method중 하나를 선택하여 test를 작성
-		* [ ] service를 mocking하여 테스트
-		* [ ] 성공하는 경우, 실패하는 경우 모두를 고려하여 작성
-* [x] Query DSL 활용하기
-	* [x]  할 일 카드 목록 api에 연관 댓글 목록 필드를 추가
+### 이전 과제 피드백 반영 CODE REFACTORING
+###### LOGIN 시 PASSWORD 검증 진행 절차 추가 (".takeIf { passwordEncoder.matches(password, it.password) }")
+- E-MAIL을 검증한 이후, PASSWORD를 추가적으로 비교하여 일치하지 않을 시 throw IllegalArgumentException
+- IllegalArgumentException 예외 발생 시 "Please check your email and password"
 
+###### PACKAGE 구조에 대한 설정 변경
+- COMMON PACKAGE 추가 (공통적으로 활용이 필요한 BaseTime Class, Exception을 COMMON PACKAGE 하위 설정)
+- COMMENT 관련 PACKAGE TODO에 속하도록 PACKAGE 구조 변경 진행
+
+###### DIET SERVICE
+- 비즈니스 로직에 집중 기존 SERVICE LAYER 내 모두 구현해놓은 코드 역할 분담 진행
+- 공통적으로 사용되는 예외처리 관련 METHOD 를 정의하여 필요한 METHOD마다 가져다 쓸 수 있도록 설정
+- SERVICE에서 직접 Dto의 값을 꺼내 각각의 필드를 대입해주는 방식 모두 변경 진행
+- Domain Entity가 Response DTO를 의존하지 않도록 변경 진행
+
+### QueryDSL
+###### QueryDSL 활용 'findAllWithFilters' Mehtod 구현
+- 동적 쿼리 실습 진행을 위한 CATEGORY(ENUM CLASS), ISCOMPLETED(BOOLEAN) COLUMN 추가
+- 아무것도 설정하지 않을 경우, CreatedAt Desc 순서로 모든 TodoCard 목록 조회
+- 입력한 키워드가 TITLE 또는 DESCRIPTION에 포함되어 있는 TodoCard 목록 조회
+- 입력한 CATEGORY에 해당하는 TodoCard 목록 조회
+- ISCOMPLETED 상태 별 목록 조회
+- 'orderSpecifier' TILTE 또는 USER NICKNAME을 순서로 조회 가능
+
+### Test Code
+###### Domain "Todo" Test Code 작성
+- Repository Test QueryDsl을 활용한 'findAllWithFilters' Method TestCode 작성
+- Service는 통합 테스트 방식으로 ~Repository 까지 함께 Test 진행 (상황 별 정상적으로 Update가 진행되는지, 예외 처리가 발생하는지 테스트 진행)
+- Controller Test의 경우 Controller만 별도로 Test를 진행하기 때문에 @SpringBootTest 활용 Test 진행
+
+### 과제를 진행하며 어려웠던 부분
+- 'ControllerTest' 작성 과정에서, Service의 역할과 Controller의 역할을 명확하게 구분하여 Test 진행이 필요하나 해당 부분을 제대로 인지하지 못하고 있어 Service의 역할도 함께 Test를 진행하려다 보니 의존해야 하는 계층들이 지속적으로 확장
+- PACKAGE 구조를 보다 유연하게, 구조화 된 틀이 아닌 다른 다양한 방식으로 구조를 설정하는 방식이 떠오르지 않아 결과적으로 구조에서 큰 변경없이 진행
+- Test 시나리오 작성 관련, 뭐가 유의미한 테스트 시나리오인지 아직까지 모르겠음
+- AWS S3 이미지 업로드 관련, 가입조차 많은 시간이 소요되어 추후 해당 과제 진행 예정
 # 🔨 빌드 환경
 
 * **Language:** Kotlin
