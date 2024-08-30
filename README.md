@@ -1,16 +1,15 @@
-# 🚀 TodoApp Security Project (TodoApp Version 2) + Spring Plus 코드 개선 과제
+# 🚀 TodoApp Security Project (TodoApp Version 2)
 
-이번 프로젝트 미션은 이전 “투두앱 백엔드 서버 만들기” 프로젝트에 이어, “JWT 를 활용한 Security 구현”입니다.
-과제는 Refactoring, 테이블 간 관계 매핑, ERD 의 변화 등을 이유로 새로운 Repository 를 만들어 새롭게 작업을 진행하였으며 ‘Version 1’ 의 하단의 Url 참고 부탁드리겠습니다.
-- https://github.com/JinkownHong/todo-project.git
+이번 프로젝트 미션은 이전 “투두앱 백엔드 서버 만들기” 프로젝트에 이어, “JWT 활용 Security 구현”입니다.
+과제는 Refactoring, 테이블 간 관계 매핑, ERD의 변화 등을 이유로 새로운 Github Repository를 만들어 새롭게 작업을 진행하였습니다.
 
 지난 과제 관련 피드백과 과제의 요구사항을 반영하여 주특기 플러스 과제를 진행하였습니다.
 
 <img src="https://techcourse-storage.s3.ap-northeast-2.amazonaws.com/2020-03-16T10:41:53.786image.png" width="400">
 
 # ✨ 주요 기능
-각 STEP 별 소개 및 현재 어디까지 해당 기능을 구현했는지도 함께 표기하였습니다.
-해당 내용은 기능을 추가할 때마다 지속적으로 변경될 내용인 점 참고 부탁드리겠습니다.
+각 STEP 별 소개 및 현재 진행 척도 함께 표기
+해당 내용은 기능을 추가할 때마다 지속적으로 변경 예정
 ### STEP 1
 
 * [x] **할일카드 작성 기능**
@@ -60,11 +59,10 @@
 
 ### 이전 과제 피드백 반영 CODE REFACTORING
 ###### LOGIN 시 PASSWORD 검증 진행 절차 추가 (".takeIf { passwordEncoder.matches(password, it.password) }")
-- E-MAIL을 검증한 이후, PASSWORD를 추가적으로 비교하여 일치하지 않을 시 throw IllegalArgumentException
-- IllegalArgumentException 예외 발생 시 "Please check your email and password"
+- E-MAIL 검증 이후, PASSWORD를 추가적으로 비교하여 일치하지 않을 시 throw IllegalArgumentException
 
-###### PACKAGE 구조에 대한 설정 변경
-- COMMON PACKAGE 추가 (공통적으로 활용이 필요한 BaseTime Class, Exception을 COMMON PACKAGE 하위 설정)
+###### PACKAGE 구조 설정 변경
+- COMMON PACKAGE 추가 (공통적으로 활용 가능한 BaseTime Class, Exception을 COMMON PACKAGE 하위 설정)
 - COMMENT 관련 PACKAGE TODO에 속하도록 PACKAGE 구조 변경 진행
 
 ###### DIET SERVICE
@@ -76,7 +74,7 @@
 ### QueryDSL
 ###### QueryDSL 활용 'findAllWithFilters' Mehtod 구현
 - 동적 쿼리 실습 진행을 위한 CATEGORY(ENUM CLASS), ISCOMPLETED(BOOLEAN) COLUMN 추가
-- 아무것도 설정하지 않을 경우, CreatedAt Desc 순서로 모든 TodoCard 목록 조회
+- 별도 설정이 없을 경우, CreatedAt Desc 순서로 모든 TodoCard 목록 조회
 - 입력한 키워드가 TITLE 또는 DESCRIPTION에 포함되어 있는 TodoCard 목록 조회
 - 입력한 CATEGORY에 해당하는 TodoCard 목록 조회
 - ISCOMPLETED 상태 별 목록 조회
@@ -84,15 +82,15 @@
 
 ### Test Code
 ###### Domain "Todo" Test Code 작성
-- Repository Test QueryDsl을 활용한 'findAllWithFilters' Method TestCode 작성
+- Repository Test QueryDsl 활용 'findAllWithFilters' Method TestCode 작성
 - Service는 통합 테스트 방식으로 ~Repository 까지 함께 Test 진행 (상황 별 정상적으로 Update가 진행되는지, 예외 처리가 발생하는지 테스트 진행)
-- Controller Test의 경우 Controller만 별도로 Test를 진행하기 때문에 @SpringBootTest 활용 Test 진행
+- Controller Test @SpringBootTest 활용 Test 진행
 
 ### 과제를 진행하며 어려웠던 부분
-- 'ControllerTest' 작성 과정에서, Service의 역할과 Controller의 역할을 명확하게 구분하여 Test 진행이 필요하나 해당 부분을 제대로 인지하지 못하고 있어 Service의 역할도 함께 Test를 진행하려다 보니 의존해야 하는 계층들이 지속적으로 확장
+- 'ControllerTest' 작성 과정에서, Service의 역할과 Controller의 역할을 명확하게 구분하여 Test 진행이 필요하나 해당 부분을 제대로 인지하지 못하고 있어 Service의 역할도 함께 Test를 진행하려다 보니 의존해야 하는 계층들이 지속적으로 확장 (각 계층 별 역할을 명확하게 구분하고, 분리해야 하는 이유)
 - PACKAGE 구조를 보다 유연하게, 구조화 된 틀이 아닌 다른 다양한 방식으로 구조를 설정하는 방식이 떠오르지 않아 결과적으로 구조에서 큰 변경없이 진행
-- Test 시나리오 작성 관련, 뭐가 유의미한 테스트 시나리오인지 아직까지 모르겠음
-- AWS S3 이미지 업로드 관련, 가입조차 많은 시간이 소요되어 추후 해당 과제 진행 예정
+- Test 시나리오 작성 관련, 어떤 방식이 유의미한 테스트 시나리오인지 학습 필요
+- 
 # 🔨 빌드 환경
 
 * **Language:** Kotlin
